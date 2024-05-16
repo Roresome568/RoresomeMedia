@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Only Social Media</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #signIn, #postSection {
+            display: none;
+            text-align: center;
+        }
+        #signIn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #signIn input {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        #signIn button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #postInput {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        #postButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #posts {
+            width: 300px;
+            margin-top: 20px;
+        }
+        .post {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .username {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div id="signIn">
+    <h1>Sign In</h1>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="signInButton">Sign In</button>
+</div>
+
+<div id="postSection">
+    <h1>Word Only Social Media</h1>
+    <input type="text" id="postInput" placeholder="Write a word...">
+    <button id="postButton">Post</button>
+
+    <div id="posts">
+        <!-- Posts will appear here -->
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const signInButton = document.getElementById('signInButton');
+        const postButton = document.getElementById('postButton');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const postInput = document.getElementById('postInput');
+        const postsContainer = document.getElementById('posts');
+        const signInSection = document.getElementById('signIn');
+        const postSection = document.getElementById('postSection');
+
+        let currentUser = '';
+
+        async function loadPosts() {
+            try {
+                const response = await fetch('https://glory-innate-coffee.glitch.me/posts');
+                if (!response.ok) {
+                    throw new Error(`Failed to load posts (${response.status} ${response.statusText})`);
+                }
+                const savedPosts = await response.json();
+                console.log('Posts loaded:', savedPosts);
+                postsContainer.innerHTML = '';
+                savedPosts.forEach(post => {
+                    displayPost(post.username, post.word);
+                });
+            } catch (error) {
+                console.error('Error loading posts:', error.message);
+            }
+        }
+
+        function displayPost(username, word) {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+            postElement.innerHTML = `<span class="username">${username}:</span> ${word}`;
+            postsContainer.prepend(postElement); // Add new post at the beginning
+        }
+
+        signInButton.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            if (username &&
